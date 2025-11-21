@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Automata Viewer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Automata Viewer (Eel)</h1>
+      <div class="controls">
+        <input id="stateName" placeholder="State name" />
+        <button id="addState">Add State</button>
+        <button id="delState">Delete State</button>
+
+        <input id="symName" placeholder="Symbol" />
+        <button id="addSym">Add Symbol</button>
+        <button id="delSym">Delete Symbol</button>
+
+        <button id="loadSample">Load Sample</button>
+        <button id="reset">Reset</button>
+        <button id="convert">Convert NFA → DFA</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="left">
+        <h2>Definition</h2>
+        <pre id="definition">(loading...)</pre>
+
+        <h3>Transition Table</h3>
+        <div id="tablewrap"></div>
+
+        <h3>Diagram</h3>
+        <div class="diagram">
+          <img id="diagramImg" alt="diagram" />
+        </div>
+      </section>
+
+      <section class="right">
+        <h2>Quick Actions</h2>
+        <div class="panel">
+          <label>Set start state:</label>
+          <input id="startState" placeholder="state" />
+          <button id="setStart">Set Start</button>
+
+          <label>Toggle final state:</label>
+          <input id="finalState" placeholder="state" />
+          <button id="toggleFinal">Toggle Final</button>
+
+          <h3>Transitions</h3>
+          <input id="tSrc" placeholder="source" />
+          <input id="tSym" placeholder="symbol" />
+          <input id="tTgt" placeholder="target" />
+          <button id="addTrans">Add Transition</button>
+          <button id="delTrans">Delete Transition</button>
+
+          <h3>Simulate</h3>
+          <input id="inputStr" placeholder="input string" />
+          <button id="simCur">Simulate Current</button>
+          <button id="simDfa">Simulate DFA</button>
+          <pre id="simResult"></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <small>Uses Eel + Graphviz for rendering (Graphviz optional).</small>
+    </footer>
+  </div>
+  <script type="text/javascript" src="/eel.js"></script>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

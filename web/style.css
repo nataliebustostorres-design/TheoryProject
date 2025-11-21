@@ -1,0 +1,14 @@
+*{box-sizing:border-box;font-family:system-ui,Segoe UI,Roboto,Arial, sans-serif}
+body{margin:0;background:#f5f7fb;color:#222}
+#app{max-width:1200px;margin:14px auto;padding:12px}
+header{display:flex;align-items:center;justify-content:space-between}
+.controls input{margin-right:6px;padding:6px}
+.controls button{margin-right:6px}
+main{display:flex;gap:16px;margin-top:12px}
+.left{flex:2;background:white;padding:12px;border-radius:8px}
+.right{flex:1;background:white;padding:12px;border-radius:8px}
+.diagram img{max-width:100%;height:auto;border:1px solid #ddd}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #ddd;padding:6px;text-align:center}
+pre{background:#f0f3f7;padding:8px;border-radius:6px}
+footer{text-align:center;margin-top:10px;color:#666}

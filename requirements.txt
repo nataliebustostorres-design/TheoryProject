@@ -1,0 +1,5 @@
+eel==0.18.2
+graphviz
+
+# optional, for image handling if needed
+Pillow

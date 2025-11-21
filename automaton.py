@@ -87,7 +87,8 @@ class NFA:
             for sym in self.symbols:
                 dest = sorted(self.transitions[s].get(sym, []))
                 if dest:
-                    lines.append(f'    δ({s}, {sym}) = {{{', '.join(dest)}}}')
+                    # Use format to safely include literal braces around the joined destinations
+                    lines.append("    δ({}, {}) = {{{}}}".format(s, sym, ', '.join(dest)))
         return '\n'.join(lines)
 
     def transition_table(self):
