@@ -408,43 +408,57 @@ class AutomatonManager:
     def simulate_nfa(self, input_str):
         """Simulate NFA and return result with trace"""
         if self.nfa.start is None:
-            return False, "No start state", []
+            return {'accepted': False, 'message': 'No start state', 'steps': []}
 
-        current = self.nfa.epsilon_closure(set([self.nfa.start]))
-        trace = [f"Starting at: {current}"]
-        
+        # Build human-friendly steps (no Python brackets)
+        current = self.nfa.epsilon_closure({self.nfa.start})
+        def fmt(states):
+            if not states:
+                return '∅'
+            return ', '.join(sorted(states))
+
+        steps = []
+        steps.append(f"Starting at: {fmt(current)}")
+
+        step_no = 1
         for ch in input_str:
             if ch not in self.nfa.symbols:
-                return False, f'Invalid symbol "{ch}"', trace
+                return {'accepted': False, 'message': f'Invalid symbol "{ch}"', 'steps': steps}
             next_set = set()
             for state in current:
                 next_set.update(self.nfa.transitions[state].get(ch, []))
             current = self.nfa.epsilon_closure(next_set)
-            trace.append(f'After input "{ch}" -> {current}')
+            steps.append(f"{step_no}) After input '{ch}' -> {fmt(current)}")
+            step_no += 1
             if not current:
-                return False, "Dead end", trace
+                return {'accepted': False, 'message': 'Dead end', 'steps': steps}
 
         accepted = any(s in self.nfa.finals for s in current)
-        trace.append(f"Final states reached: {current}")
-        return accepted, "ACCEPT" if accepted else "REJECT", trace
+        steps.append(f"Final states reached: {fmt(current)}")
+        return {'accepted': accepted, 'message': 'ACCEPT' if accepted else 'REJECT', 'steps': steps}
 
     def simulate_dfa(self, input_str):
         """Simulate DFA and return result with trace"""
         if self.dfa.start is None:
-            return False, "No start state", []
+            return {'accepted': False, 'message': 'No start state', 'steps': []}
+
+        def fmt_state(s):
+            return s if s is not None else '∅'
 
         cur = self.dfa.start
-        trace = [f"Starting at: {cur}"]
-        
+        steps = [f"Starting at: {fmt_state(cur)}"]
+        step_no = 1
+
         for ch in input_str:
             if ch not in self.dfa.symbols:
-                return False, f'Invalid symbol "{ch}"', trace
+                return {'accepted': False, 'message': f'Invalid symbol "{ch}"', 'steps': steps}
             next_state = self.dfa.transitions.get(cur, {}).get(ch)
-            trace.append(f'Input "{ch}" -> {next_state}')
+            steps.append(f"{step_no}) Input '{ch}' -> {fmt_state(next_state)}")
+            step_no += 1
             if next_state is None:
-                return False, "Dead end", trace
+                return {'accepted': False, 'message': 'Dead end', 'steps': steps}
             cur = next_state
 
         accepted = cur in self.dfa.finals
-        trace.append(f"Final state reached: {cur}")
-        return accepted, "ACCEPT" if accepted else "REJECT", trace
+        steps.append(f"Final state reached: {fmt_state(cur)}")
+        return {'accepted': accepted, 'message': 'ACCEPT' if accepted else 'REJECT', 'steps': steps}

@@ -106,15 +106,40 @@ async function setup() {
   document.getElementById('simCur').onclick = async () => {
     const s = document.getElementById('inputStr').value;
     const res = await eel.simulate_current(s)();
-    document.getElementById('simResult').textContent = JSON.stringify(res, null, 2);
+    renderSimResult(res);
   };
   document.getElementById('simDfa').onclick = async () => {
     const s = document.getElementById('inputStr').value;
     const res = await eel.simulate_dfa(s)();
-    document.getElementById('simResult').textContent = JSON.stringify(res, null, 2);
+    renderSimResult(res);
   };
 
   refreshAll();
 }
 
 window.addEventListener('DOMContentLoaded', setup);
+
+function renderSimResult(res) {
+  const resultDiv = document.getElementById('simResult');
+  const stepsList = document.getElementById('simSteps');
+  resultDiv.innerHTML = '';
+  stepsList.innerHTML = '';
+  if (!res) return;
+
+  // res expected: { accepted: bool, message: str, steps: [str] }
+  const accepted = !!res.accepted;
+  const msg = res.message || (accepted ? 'ACCEPT' : 'REJECT');
+
+  const span = document.createElement('span');
+  span.textContent = msg;
+  span.className = accepted ? 'sim-accepted' : 'sim-rejected';
+  resultDiv.appendChild(span);
+
+  if (Array.isArray(res.steps)) {
+    res.steps.forEach(s => {
+      const li = document.createElement('li');
+      li.textContent = s;
+      stepsList.appendChild(li);
+    });
+  }
+}

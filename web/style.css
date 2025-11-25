@@ -2,8 +2,52 @@
 body{margin:0;background:#f5f7fb;color:#222}
 #app{max-width:1200px;margin:14px auto;padding:12px}
 header{display:flex;align-items:center;justify-content:space-between}
-.controls input{margin-right:6px;padding:6px}
-.controls button{margin-right:6px}
+/* Inputs */
+.controls input,
+.panel input,
+input[type="text"],
+input[type="search"],
+input[id] {
+	margin:0 8px 8px 0;
+	padding:8px 10px;
+	border:1px solid #d7dde6;
+	border-radius:8px;
+	background:linear-gradient(180deg,#fff,#fbfcff);
+	box-shadow:0 1px 2px rgba(16,24,40,0.03) inset;
+	transition:all .12s ease-in-out;
+}
+.controls input:focus,.panel input:focus{outline:none;border-color:#7aa7ff;box-shadow:0 6px 18px rgba(122,167,255,0.08)}
+
+/* Buttons */
+.controls button,
+.panel button,
+button[id],
+button {
+	margin:0 8px 8px 0;
+	padding:8px 12px;
+	border-radius:9px;
+	border:0;
+	background:linear-gradient(180deg,#6b7fa8,#556b91); /* muted blue */
+	color:#fff;font-weight:600;
+	box-shadow:0 4px 12px rgba(34,60,100,0.10);
+	cursor:pointer;
+	transition:transform .08s ease, box-shadow .12s ease, opacity .12s ease;
+}
+.controls button.secondary,
+.panel button.secondary{background:transparent;color:#333;border:1px solid #e3e8ef;box-shadow:none}
+.controls button:hover,.panel button:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(34,60,100,0.12)}
+.controls button:active,.panel button:active{transform:translateY(0);opacity:0.95}
+
+/* Accent button (Load Sample) */
+.controls button.accent,
+.panel button.accent,
+#loadSample {
+	background:linear-gradient(180deg,#38a169,#2f855a);
+	box-shadow:0 6px 18px rgba(46,125,50,0.12);
+}
+.controls button.accent:hover,#loadSample:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(46,125,50,0.14)}
+.controls button.accent:active,#loadSample:active{opacity:0.95}
+
 main{display:flex;gap:16px;margin-top:12px}
 .left{flex:2;background:white;padding:12px;border-radius:8px}
 .right{flex:1;background:white;padding:12px;border-radius:8px}
@@ -12,3 +56,11 @@ table{width:100%;border-collapse:collapse}
 th,td{border:1px solid #ddd;padding:6px;text-align:center}
 pre{background:#f0f3f7;padding:8px;border-radius:6px}
 footer{text-align:center;margin-top:10px;color:#666}
+
+/* Simulation result styling */
+.sim-result{margin-top:10px;font-weight:700;display:flex;align-items:center;gap:10px}
+.sim-result span{font-size:14px;padding:6px 10px;border-radius:8px}
+.sim-accepted{color:#0f5132;background:linear-gradient(180deg,#e9f8ea,#dff3df);border:1px solid #bde8c4}
+.sim-rejected{color:#7a1220;background:linear-gradient(180deg,#fdecea,#fbdedc);border:1px solid #f5b6b6}
+.sim-steps{margin-top:8px;padding-left:18px}
+.sim-steps li{margin:6px 0;padding:6px 8px;background:#fbfdff;border-radius:6px;border:1px solid #eef3f8}
