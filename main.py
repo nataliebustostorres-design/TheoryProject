@@ -176,6 +176,23 @@ def convert_nfa_to_dfa():
 
 
 @eel.expose
+def set_mode(mode: str):
+    try:
+        manager.set_mode(mode.upper())
+        return True, f"Mode set to {mode.upper()}"
+    except Exception as e:
+        return False, str(e)
+
+
+@eel.expose
+def is_dfa_available():
+    try:
+        return bool(manager.dfa.states)
+    except Exception:
+        return False
+
+
+@eel.expose
 def simulate_current(input_str):
     return manager.simulate_current(input_str)
 
@@ -188,6 +205,32 @@ def simulate_dfa(input_str):
 @eel.expose
 def render_png_base64():
     automaton = manager.get_current_automaton()
+    png = _automaton_to_graph_png(automaton)
+    if png is None:
+        return None
+    return base64.b64encode(png).decode('ascii')
+
+
+@eel.expose
+def render_png_base64_for(mode: str = None):
+    """Render PNG for a specific automaton mode.
+
+    mode: None or 'current' -> current automaton (manager.mode)
+          'NFA' -> render manager.nfa
+          'DFA' -> render manager.dfa
+    Returns base64 PNG or None
+    """
+    if mode is None or mode.lower() == 'current':
+        automaton = manager.get_current_automaton()
+    else:
+        m = mode.upper()
+        if m == 'NFA':
+            automaton = manager.nfa
+        elif m == 'DFA':
+            automaton = manager.dfa
+        else:
+            automaton = manager.get_current_automaton()
+
     png = _automaton_to_graph_png(automaton)
     if png is None:
         return None

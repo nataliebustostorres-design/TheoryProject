@@ -18,7 +18,8 @@ async function refreshAll() {
     wrap.appendChild(tbl);
   }
 
-  const b64 = await eel.render_png_base64()();
+  const mode = document.getElementById('diagramMode') ? document.getElementById('diagramMode').value : 'current';
+  const b64 = await eel.render_png_base64_for(mode)();
   const img = document.getElementById('diagramImg');
   if (b64) {
     img.src = 'data:image/png;base64,' + b64;
@@ -101,7 +102,33 @@ async function setup() {
 
   document.getElementById('loadSample').onclick = async () => { await eel.load_sample()(); refreshAll(); };
   document.getElementById('reset').onclick = async () => { await eel.reset_automaton()(); refreshAll(); };
-  document.getElementById('convert').onclick = async () => { const r = await eel.convert_nfa_to_dfa()(); alert(r[1]); refreshAll(); };
+  document.getElementById('convert').onclick = async () => {
+    const r = await eel.convert_nfa_to_dfa()();
+    try { alert(r[1]); } catch(e) { console.log('convert message', r); }
+    // If conversion succeeded, reveal render controls and show DFA diagram
+    if (r && r[0]) {
+      const wrap = document.getElementById('diagramControlsWrap');
+      if (wrap) wrap.classList.remove('hidden');
+      const modeSelect = document.getElementById('diagramMode');
+      if (modeSelect) modeSelect.value = 'DFA';
+      await refreshDiagram();
+      // Show the "Use DFA Table" button so user can switch the table view
+      const useBtn = document.getElementById('useDfaTable');
+      if (useBtn) useBtn.classList.remove('hidden');
+    }
+    refreshAll();
+  };
+
+  // Use DFA Table button: set backend mode to DFA and refresh table
+  const useDfaBtn = document.getElementById('useDfaTable');
+  if (useDfaBtn) {
+    useDfaBtn.onclick = async () => {
+      const r = await eel.set_mode('DFA')();
+      try { if (Array.isArray(r)) console.log('set_mode', r[1]); } catch(e) {}
+      // Refresh so transition table is now for DFA
+      refreshAll();
+    };
+  }
 
   document.getElementById('simCur').onclick = async () => {
     const s = document.getElementById('inputStr').value;
@@ -114,7 +141,35 @@ async function setup() {
     renderSimResult(res);
   };
 
+  // Diagram controls: refresh button and mode selector
+  const diagramMode = document.getElementById('diagramMode');
+  const refreshBtn = document.getElementById('refreshDiagram');
+  if (refreshBtn) refreshBtn.onclick = refreshDiagram;
+  if (diagramMode) diagramMode.onchange = refreshDiagram;
+
+  // On load, detect if DFA is available so the Use DFA Table button appears
+  try {
+    const hasDfa = await eel.is_dfa_available()();
+    if (hasDfa) {
+      const useBtn2 = document.getElementById('useDfaTable');
+      if (useBtn2) useBtn2.classList.remove('hidden');
+    }
+  } catch(e) { console.warn('is_dfa_available failed', e); }
+
   refreshAll();
+}
+
+async function refreshDiagram() {
+  const mode = document.getElementById('diagramMode') ? document.getElementById('diagramMode').value : 'current';
+  const b64 = await eel.render_png_base64_for(mode)();
+  const img = document.getElementById('diagramImg');
+  if (b64) {
+    img.src = 'data:image/png;base64,' + b64;
+    img.alt = 'diagram';
+  } else {
+    img.src = '';
+    img.alt = 'Graphviz not available or rendering failed';
+  }
 }
 
 window.addEventListener('DOMContentLoaded', setup);

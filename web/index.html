@@ -21,7 +21,6 @@
 
         <button id="loadSample" class="accent">Load Sample</button>
         <button id="reset">Reset</button>
-        <button id="convert">Convert NFA → DFA</button>
       </div>
     </header>
 
@@ -35,7 +34,20 @@
 
         <h3>Diagram</h3>
         <div class="diagram">
+          <div class="diagram-controls hidden" id="diagramControlsWrap">
+            <label for="diagramMode">Render:</label>
+            <select id="diagramMode">
+              <option value="current">Current</option>
+              <option value="NFA">NFA</option>
+              <option value="DFA">DFA</option>
+            </select>
+            <button id="refreshDiagram">Refresh Diagram</button>
+          </div>
           <img id="diagramImg" alt="diagram" />
+        </div>
+        <div class="convert-area">
+          <button id="convert" class="convert-btn">Convert NFA → DFA</button>
+          <button id="useDfaTable" class="table-btn hidden">Use DFA Table</button>
         </div>
       </section>
 
