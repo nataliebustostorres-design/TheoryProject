@@ -193,6 +193,14 @@ def is_dfa_available():
 
 
 @eel.expose
+def get_mode():
+    try:
+        return manager.mode
+    except Exception:
+        return 'NFA'
+
+
+@eel.expose
 def simulate_current(input_str):
     return manager.simulate_current(input_str)
 

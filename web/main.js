@@ -119,15 +119,46 @@ async function setup() {
     refreshAll();
   };
 
-  // Use DFA Table button: set backend mode to DFA and refresh table
+  // Use DFA Table button: toggle between DFA and NFA table views
   const useDfaBtn = document.getElementById('useDfaTable');
+  async function updateUseDfaButtonLabel() {
+    try {
+      const mode = await eel.get_mode()();
+      if (mode && mode.toUpperCase() === 'DFA') {
+        useDfaBtn.textContent = 'Use NFA Table';
+      } else {
+        useDfaBtn.textContent = 'Use DFA Table';
+      }
+    } catch (e) {
+      // Fallback label
+      if (useDfaBtn) useDfaBtn.textContent = 'Use DFA Table';
+    }
+  }
+
   if (useDfaBtn) {
     useDfaBtn.onclick = async () => {
-      const r = await eel.set_mode('DFA')();
-      try { if (Array.isArray(r)) console.log('set_mode', r[1]); } catch(e) {}
-      // Refresh so transition table is now for DFA
-      refreshAll();
+      try {
+        const current = (await eel.get_mode()() || 'NFA').toUpperCase();
+        const target = current === 'DFA' ? 'NFA' : 'DFA';
+        await eel.set_mode(target)();
+        // Update button label to reflect new opposite action
+        await updateUseDfaButtonLabel();
+        // If switching to DFA, also reveal diagram controls and set diagram mode
+        if (target === 'DFA') {
+          const wrap = document.getElementById('diagramControlsWrap');
+          if (wrap) wrap.classList.remove('hidden');
+          const modeSelect = document.getElementById('diagramMode');
+          if (modeSelect) modeSelect.value = 'DFA';
+          await refreshDiagram();
+        }
+        // Refresh table to reflect chosen automaton
+        refreshAll();
+      } catch (e) {
+        console.error('toggle useDfaTable failed', e);
+      }
     };
+    // Ensure label is correct at startup if button visible
+    updateUseDfaButtonLabel().catch(()=>{});
   }
 
   document.getElementById('simCur').onclick = async () => {
